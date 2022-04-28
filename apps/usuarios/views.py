@@ -2,8 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib import auth, messages
 from receitas.models import Receita
+from django.core.paginator import Paginator
 
 def cadastro(request):
+    '''Cadastra um novo usuário no sistema'''
     if request.method == 'POST':
         nome = request.POST['nome']
         email = request.POST['email']
@@ -40,6 +42,7 @@ def cadastro(request):
         return render(request, 'usuarios/cadastro.html')
 
 def login(request):
+    '''Realiza o login de um usuário no sistema'''
     if request.method == 'POST':
         email = request.POST['email']
         senha = request.POST['senha']
@@ -63,18 +66,27 @@ def login(request):
     return render(request, 'usuarios/login.html')
 
 def logout(request):
+    '''Desconecta o usuário do sistema'''
     auth.logout(request)
     return redirect('index')
 
 def dashboard(request):
+    '''Renderiza a área do usuário logado'''
     if request.user.is_authenticated:
         receitas = Receita.objects.order_by('-data_receita').filter(pessoa=request.user.id)
-        return render(request, 'usuarios/dashboard.html', {'receitas' : receitas})
+
+        paginator = Paginator(receitas, 3)
+        page = request.GET.get('page')
+        receitas_por_pagina = paginator.get_page(page)
+
+        return render(request, 'usuarios/dashboard.html', {'receitas' : receitas_por_pagina})
     else:
         return redirect('index')
 
 def campo_vazio(campo):
+    '''Verifica se um campo não foi preenchido'''
     return not campo.strip()
 
 def senhas_diferentes(senha, senha2):
+    '''Verifica se duas senhas informadas são diferentes'''
     return senha != senha2

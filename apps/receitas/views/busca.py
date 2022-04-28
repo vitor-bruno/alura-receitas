@@ -2,6 +2,7 @@ from django.shortcuts import render
 from ..models import Receita
 
 def busca(request):
+    '''Renderiza a página de busca de receitas'''
     busca_receitas = Receita.objects.order_by('-data_receita').filter(publicada=True)
     
     if 'busca' in request.GET:
