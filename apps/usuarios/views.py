@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib import auth, messages
 from receitas.models import Receita
@@ -36,7 +36,6 @@ def cadastro(request):
         user.save()
         messages.success(request, 'Cadastro realizado com sucesso!')
 
-        print(nome, email, senha, senha_2)
         return redirect('login')
     else:
         return render(request, 'usuarios/cadastro.html')
